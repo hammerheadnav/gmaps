@@ -11,11 +11,11 @@ func ExampleDecodePolyline() {
 	start := Point{Lat: 0, Lng: 0}
 
 	var ps []Point
-	e := DecodePolyline(start, []byte("_p~iF~ps|U_ulLnnqC_mqNvxq`@"), &ps)
+	e := DecodePolyline(start, []byte("_p~iF~ps|U_ulLnnqC_mqNvxq`@"), &ps, 1e5)
 	fmt.Printf("Error: %v\nDecoded: %v\n", e, ps)
 	// Output:
 	// Error: <nil>
-  // Decoded: [{0 0} {38.5 -120.2} {40.7 -120.95} {43.252 -126.453}]
+	// Decoded: [{0 0} {38.5 -120.2} {40.7 -120.95} {43.252 -126.453}]
 }
 
 // Test decoding the sample polyline given on
@@ -24,7 +24,7 @@ func TestSamplePolyline(t *testing.T) {
 	polyline := []byte("_p~iF~ps|U_ulLnnqC_mqNvxq`@")
 
 	var ps []Point
-	e := DecodePolyline(Point{Lat: 0, Lng: 0}, polyline, &ps)
+	e := DecodePolyline(Point{Lat: 0, Lng: 0}, polyline, &ps, 1e5)
 	if e != nil {
 		t.Errorf("Want: nil error, got: %s", e.Error())
 	}
@@ -56,7 +56,7 @@ func TestIncompleteLat(t *testing.T) {
 	polyline := []byte("_p~iF~ps|U_ul")
 
 	var ps []Point
-	e := DecodePolyline(Point{Lat: 0, Lng: 0}, polyline, &ps)
+	e := DecodePolyline(Point{Lat: 0, Lng: 0}, polyline, &ps, 1e5)
 	if e == nil {
 		t.Errorf("Want: non-nil error, got: %s", e.Error())
 	}
@@ -90,7 +90,7 @@ func TestIncompleteLng(t *testing.T) {
 	polyline := []byte("_p~iF~ps|U_ulLnnq")
 
 	var ps []Point
-	e := DecodePolyline(Point{Lat: 0, Lng: 0}, polyline, &ps)
+	e := DecodePolyline(Point{Lat: 0, Lng: 0}, polyline, &ps, 1e5)
 	if e == nil {
 		t.Errorf("Want: non-nil error, got: %s", e.Error())
 	}
@@ -120,7 +120,7 @@ func TestIncompleteLng(t *testing.T) {
 
 func TestEmptyString(t *testing.T) {
 	var ps []Point
-	e := DecodePolyline(Point{Lat: 0, Lng: 0}, []byte(""), &ps)
+	e := DecodePolyline(Point{Lat: 0, Lng: 0}, []byte(""), &ps, 1e5)
 
 	if e != nil {
 		t.Errorf("Want no error, got: %v", e)

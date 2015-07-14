@@ -27,7 +27,7 @@ func (e IncompleteTokenError) Error() string {
 // character after the final decoded byte; v, the decoded value; and err, either
 // nil if decoding succeeded or an IncompleteTokenError if no byte without 0x20
 // was found in line.
-func decodeOneToken(line []byte) (pos int, v float64, err error) {
+func decodeOneToken(line []byte, precision float64) (pos int, v float64, err error) {
 	var token int64
 	var shift uint
 	for i, c := range line {
@@ -42,7 +42,7 @@ func decodeOneToken(line []byte) (pos int, v float64, err error) {
 			} else {
 				token = token >> 1
 			}
-			v = float64(token) / 1e5
+			v = float64(token) / precision
 			return
 		}
 	}
@@ -58,7 +58,7 @@ func decodeOneToken(line []byte) (pos int, v float64, err error) {
 // point's coordinates, but p is filled with the actual points that make
 // up the polyline. If p is nil, a new array is instantiated. If the polyline
 // string is truncated, err is an IncompleteTokenError; otherwise it is nil.
-func DecodePolyline(start Point, line []byte, p *[]Point) (err error) {
+func DecodePolyline(start Point, line []byte, p *[]Point, precision float64) (err error) {
 	if *p == nil {
 		*p = make([]Point, 0)
 	}
@@ -68,14 +68,14 @@ func DecodePolyline(start Point, line []byte, p *[]Point) (err error) {
 	var latDelta, lngDelta float64
 	var pos, consumed int
 	for pos < len(line) {
-		consumed, latDelta, err = decodeOneToken(line[pos:len(line)])
+		consumed, latDelta, err = decodeOneToken(line[pos:len(line)], precision)
 		pos += consumed
 		start.Lat += latDelta
 		if err != nil {
 			return
 		}
 
-		consumed, lngDelta, err = decodeOneToken(line[pos:len(line)])
+		consumed, lngDelta, err = decodeOneToken(line[pos:len(line)], precision)
 		pos += consumed
 		start.Lng += lngDelta
 		if err != nil {
