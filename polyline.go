@@ -86,3 +86,7 @@ func DecodePolyline(start Point, line []byte, p *[]Point, precision float64) (er
 	}
 	return
 }
+
+func DecodePolylineWithoutStartingPoint(line []byte, p *[]Point, precision float64) (err error) {
+	return DecodePolyline(Point{}, line, p, precision)
+}
