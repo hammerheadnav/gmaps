@@ -63,8 +63,6 @@ func DecodePolyline(start Point, line []byte, p *[]Point, precision float64) (er
 		*p = make([]Point, 0)
 	}
 
-	*p = append(*p, start)
-
 	var latDelta, lngDelta float64
 	var pos, consumed int
 	for pos < len(line) {
