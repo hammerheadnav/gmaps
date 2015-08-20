@@ -1,22 +1,8 @@
 package gmaps
 
 import (
-	"fmt"
 	"testing"
 )
-
-func ExampleDecodePolyline() {
-	// Start decoding relative to (0, 0); though underspecified in the API docs,
-	// that is how their polyline is set up.
-	start := Point{Lat: 0, Lng: 0}
-
-	var ps []Point
-	e := DecodePolyline(start, []byte("_p~iF~ps|U_ulLnnqC_mqNvxq`@"), &ps, 1e5)
-	fmt.Printf("Error: %v\nDecoded: %v\n", e, ps)
-	// Output:
-	// Error: <nil>
-	// Decoded: [{0 0} {38.5 -120.2} {40.7 -120.95} {43.252 -126.453}]
-}
 
 // Test decoding the sample polyline given on
 // https://developers.google.com/maps/documentation/utilities/polylinealgorithm.
@@ -34,7 +20,6 @@ func TestSamplePolyline(t *testing.T) {
 	}
 
 	expected := []Point{
-		Point{Lat: 0, Lng: 0},
 		Point{Lat: 38.5, Lng: -120.2},
 		Point{Lat: 40.7, Lng: -120.95},
 		Point{Lat: 43.252, Lng: -126.453}}
@@ -70,7 +55,6 @@ func TestIncompleteLat(t *testing.T) {
 	}
 
 	expected := []Point{
-		Point{Lat: 0, Lng: 0},
 		Point{Lat: 38.5, Lng: -120.2}}
 
 	if len(expected) != len(ps) {
@@ -104,7 +88,6 @@ func TestIncompleteLng(t *testing.T) {
 	}
 
 	expected := []Point{
-		Point{Lat: 0, Lng: 0},
 		Point{Lat: 38.5, Lng: -120.2}}
 
 	if len(expected) != len(ps) {
@@ -115,26 +98,5 @@ func TestIncompleteLng(t *testing.T) {
 		if expected[i] != ps[i] {
 			t.Errorf("Element %d: want %v, got %v", i, expected[i], ps[i])
 		}
-	}
-}
-
-func TestEmptyString(t *testing.T) {
-	var ps []Point
-	e := DecodePolyline(Point{Lat: 0, Lng: 0}, []byte(""), &ps, 1e5)
-
-	if e != nil {
-		t.Errorf("Want no error, got: %v", e)
-	}
-
-	if len(ps) != 1 {
-		t.Errorf("Want len(ps) == 1, got len(ps) == %v", len(ps))
-	}
-
-	if ps[0].Lat != 0 {
-		t.Errorf("Want ps[0].Lat == 0, got: %v", ps[0].Lat)
-	}
-
-	if ps[0].Lng != 0 {
-		t.Errorf("Want ps[0].Lng == 0, got: %v", ps[0].Lng)
 	}
 }
